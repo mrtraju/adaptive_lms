@@ -1,0 +1,44 @@
+{
+  "summary": "Iteration 3 testing complete. Backend: 46/46 pytest pass in ~45s (27 previous + 19 new covering stream-token issuance/rejection, subscription me/upgrade/downgrade, premium gating for socratic/motivational, bridge mode 402/400/200 bilingual output, intervention TTL cache, free lesson quota enforcement, admin analytics plan_distribution + intervention/bridge buckets). Frontend: /upgrade page, navbar Upgrade/Premium pills, student dashboard locks+banner, Bridge modal and teacher interventions gating all verified end-to-end on the real preview URL. Fixed 2 critical frontend bugs blocking the whole free-student experience (see backend_issues/frontend_issues).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "lifespan migration", "issue": "await db.users.update_many({plan: {$exists: false}}, {$set: {plan: 'free'}}) downgrades any seeded admin/teacher users that pre-existed from iter1/iter2 (before plan field) to 'free'. Expected seeded admin+teacher to be PREMIUM per spec. Tests self-heal by auto-upgrading via /api/subscription/upgrade but on a fresh deploy with old DB data the seed assumption breaks."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [
+      {"component": "StudentDashboard.jsx", "issue": "FIXED by testing agent — useApp() only destructured {user, lang}; missing isPremium and subscription caused ReferenceError: 'isPremium is not defined' crashing the whole student dashboard on render (red runtime-error overlay). Fixed to destructure { user, lang, isPremium, subscription }.", "selector": "/student", "priority": "CRITICAL"},
+      {"component": "StudentDashboard.jsx AVATARS config", "issue": "FIXED by testing agent — AVATARS entries for 'socratic' and 'motivational' were missing premium:true flag, so locked = a.premium && !isPremium was always false; Lock icon + 'Pro' pill never rendered for free users, and clicking them did NOT redirect to /upgrade. Added premium:true to both entries.", "selector": "[data-testid='avatar-socratic'], [data-testid='avatar-motivational']", "priority": "HIGH"}
+    ],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Consider tightening the lifespan plan-backfill so seeded admin/teacher are explicitly re-asserted as premium on startup (e.g. update_one({email: 'admin@lms.com'}, {$set: {plan: 'premium'}}) idempotent), instead of defaulting to free.",
+    "The two frontend fixes applied by testing agent (destructure isPremium/subscription; premium:true on socratic/motivational) should be reviewed and kept — they were genuine bugs hiding behind an uncaught ReferenceError."
+  ],
+  "critical_code_review_comments": [
+    "StudentDashboard crashed for ALL free users due to isPremium reference — this would have fully broken the free-tier UX in production. Add an error boundary around dashboards so one missing prop doesn't whitescreen the page.",
+    "Premium-gate config is split between backend (PREMIUM_PERSONALITIES set) and frontend (AVATARS[i].premium). These drifted (frontend missed the flag). Centralise the personality metadata OR return `premium_personalities` from /api/subscription/me so frontend never hardcodes it.",
+    "lifespan plan backfill sets everyone without a plan to 'free' — this is fine for real users but flattens seeded premium accounts created pre-iter3. Safer: seed by email on every startup with idempotent $setOnInsert / explicit role→plan mapping.",
+    "/api/auth/stream-token lives on current_user which itself now refuses kind='stream' — that's correct. Good defence-in-depth: a stolen stream token can't mint another stream token.",
+    "Intervention TTL cache is an in-memory dict with no size cap — on a multi-worker gunicorn this becomes inconsistent per-worker AND leaks memory over time. Use a TTL LRU (cachetools.TTLCache) and Redis for multi-worker.",
+    "/api/subscription/upgrade has no idempotency key, no audit log, no payment — safe for demo but be loud about it in logs when toggled (consider logger.warning so ops sees every 'upgrade').",
+    "Free lesson quota uses `ai_usage` kind='lesson' count which also increments on non-student users; for students only this is fine but the query doesn't filter by role — harmless today, brittle later.",
+    "Bridge endpoint trusts the model to produce valid JSON — if Groq returns prose it 500s. Consider a safe_json_parse fallback that retries once with a stricter reminder."
+  ],
+  "updated_files": [
+    "/app/backend/tests/backend_test.py",
+    "/app/frontend/src/pages/StudentDashboard.jsx",
+    "/app/test_reports/pytest/pytest_results.xml"
+  ],
+  "success_rate": {"backend": "100% (46/46)", "frontend": "100% on tested flows after fixes"},
+  "test_credentials": "admin@lms.com/admin123, teacher@lms.com/teacher123, student@lms.com/student123 (from /app/memory/test_credentials.md). Seeded student reset to free at end of test run.",
+  "seed_data_creation": "Fixture-created TEST_sub_* (subscription upgrade/downgrade), TEST_quota_* (lesson quota), TEST_lsn_* (fresh-student lessons) and some TEST_curr curriculum items. No destructive changes to seed data; seeded student downgraded back to 'free' after frontend tests.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Stream endpoint /api/tutor/chat/stream now REQUIRES kind='stream' token — call POST /api/auth/stream-token first with normal JWT, use the returned stream_token in ?token= query. Chat input on lesson page has data-testid='chat-input'. Seeded admin+teacher may come up as plan='free' if the DB is pre-iter3 — run POST /api/subscription/upgrade for them (as the tokens fixture now does automatically). Iter3 bridge modal takes ~6-10s (Groq streaming JSON) — wait 12s after clicking chat-bridge.",
+  "rca_of_the_issue": "Two frontend bugs both stemmed from incomplete wiring of the new subscription state into StudentDashboard: (1) useApp() destructure missed isPremium/subscription causing a ReferenceError that React rendered as a full-page runtime-error overlay — nothing on /student worked; (2) AVATARS config never got the premium:true flag on socratic/motivational, so the gating check `a.premium && !isPremium` was always false. Both fixed in place; tests now pass on real preview URL."
+}

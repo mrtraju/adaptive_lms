@@ -1,0 +1,143 @@
+{
+  "theme": "LIGHT",
+  "archetype": "3 (Pastel & Soft) with Neo-Brutalist Twist",
+  "reasoning": "The application is an educational LMS with AI coaching that requires a friendly, approachable, and engaging environment. A soft pastel color palette reduces cognitive overload and anxiety, while neo-brutalist solid black borders and shadows provide clear structure, focus, and a modern 'fun' vibe that suits adaptive learning, avatar interactions, and dashboards without feeling overly corporate or clinical.",
+  "colors": {
+    "background": {
+      "default": "#FAFAFA",
+      "paper": "#FFFFFF",
+      "lavender": "#F4F0FF",
+      "mint": "#E8F5E9",
+      "butter": "#FFF9C4",
+      "peach": "#FFEBE6"
+    },
+    "text": {
+      "primary": "#121212",
+      "secondary": "#4A4A4A",
+      "disabled": "#A0A0A0"
+    },
+    "border": {
+      "default": "#121212",
+      "subtle": "#E0E0E0"
+    },
+    "brand": {
+      "primary": "#FF6B6B",
+      "secondary": "#4ECDC4",
+      "tertiary": "#FFE66D",
+      "quaternary": "#9D4EDD"
+    },
+    "avatars": {
+      "strict": "#E8F5E9",
+      "friendly": "#F4F0FF",
+      "socratic": "#FFF9C4",
+      "motivational": "#FFEBE6"
+    },
+    "emotion_indicators": {
+      "positive": "#4ECDC4",
+      "neutral": "#FFE66D",
+      "negative": "#FF6B6B"
+    }
+  },
+  "typography": {
+    "font_families": {
+      "headings": "'Outfit', sans-serif",
+      "body": "'DM Sans', sans-serif",
+      "mono": "'JetBrains Mono', monospace"
+    },
+    "sizes": {
+      "h1": "text-4xl sm:text-5xl lg:text-6xl tracking-tight font-black",
+      "h2": "text-2xl sm:text-3xl lg:text-4xl tracking-tight font-bold",
+      "h3": "text-xl sm:text-2xl tracking-tight font-bold",
+      "h4": "text-lg sm:text-xl font-semibold",
+      "body": "text-base leading-relaxed",
+      "small": "text-sm font-medium",
+      "overline": "text-xs uppercase tracking-[0.2em] font-bold"
+    }
+  },
+  "spacing_and_layout": {
+    "philosophy": "Generous spacing. Containers must have internal padding. Use asymmetrical grids for dashboards where possible to create visual interest.",
+    "container": "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8",
+    "bento_grid": "grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6",
+    "card_padding": "p-6 md:p-8",
+    "section_spacing": "py-16 md:py-24"
+  },
+  "components": {
+    "cards": {
+      "style": "bg-white border-2 border-[#121212] rounded-xl shadow-[4px_4px_0px_0px_rgba(18,18,18,1)] transition-transform duration-200 hover:-translate-y-1 hover:shadow-[6px_6px_0px_0px_rgba(18,18,18,1)]"
+    },
+    "buttons": {
+      "primary": "bg-[#FF6B6B] text-white border-2 border-[#121212] rounded-full px-6 py-3 font-bold shadow-[3px_3px_0px_0px_rgba(18,18,18,1)] hover:bg-[#ff5252] hover:shadow-[4px_4px_0px_0px_rgba(18,18,18,1)] hover:-translate-y-0.5 transition-all focus:ring-4 focus:ring-[#FF6B6B]/30",
+      "secondary": "bg-[#4ECDC4] text-[#121212] border-2 border-[#121212] rounded-full px-6 py-3 font-bold shadow-[3px_3px_0px_0px_rgba(18,18,18,1)] hover:bg-[#45b8b0] hover:shadow-[4px_4px_0px_0px_rgba(18,18,18,1)] hover:-translate-y-0.5 transition-all",
+      "outline": "bg-white text-[#121212] border-2 border-[#121212] rounded-full px-6 py-3 font-bold shadow-[3px_3px_0px_0px_rgba(18,18,18,1)] hover:bg-gray-50 transition-all"
+    },
+    "inputs": {
+      "style": "bg-white border-2 border-[#121212] rounded-lg px-4 py-3 font-medium focus:outline-none focus:ring-0 focus:border-[#FF6B6B] shadow-[2px_2px_0px_0px_rgba(18,18,18,1)]"
+    },
+    "chat_interface": {
+      "container": "border-2 border-[#121212] rounded-2xl bg-white shadow-[6px_6px_0px_0px_rgba(18,18,18,1)] overflow-hidden flex flex-col h-[70vh]",
+      "user_bubble": "bg-[#E8F5E9] border-2 border-[#121212] rounded-2xl rounded-tr-none p-4 max-w-[80%] self-end shadow-[2px_2px_0px_0px_rgba(18,18,18,1)]",
+      "ai_bubble": "bg-[#F4F0FF] border-2 border-[#121212] rounded-2xl rounded-tl-none p-4 max-w-[80%] self-start shadow-[2px_2px_0px_0px_rgba(18,18,18,1)]",
+      "input_area": "border-t-2 border-[#121212] bg-[#FAFAFA] p-4 flex gap-3"
+    },
+    "avatar_picker": {
+      "container": "grid grid-cols-2 md:grid-cols-4 gap-4",
+      "item_active": "border-4 border-[#FF6B6B] bg-[#FFF9C4] rounded-xl p-4 shadow-[4px_4px_0px_0px_rgba(18,18,18,1)] transform -translate-y-1 cursor-pointer",
+      "item_inactive": "border-2 border-[#121212] bg-white rounded-xl p-4 shadow-[2px_2px_0px_0px_rgba(18,18,18,1)] hover:bg-gray-50 cursor-pointer transition-all hover:-translate-y-0.5"
+    },
+    "navbar": {
+      "style": "sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b-2 border-[#121212] px-6 py-4 flex justify-between items-center"
+    }
+  },
+  "media": {
+    "images": {
+      "hero_background": {
+        "url": "https://images.pexels.com/photos/5905703/pexels-photo-5905703.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Student learning online with laptop, to be used in login/marketing page."
+      },
+      "avatar_strict": {
+        "url": "https://images.unsplash.com/photo-1669042490014-6a1b76025e0c?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwzfHxjb2xvcmZ1bCUyMGFic3RyYWN0JTIwc2hhcGUlMjAzZHxlbnwwfHx8fDE3NzY4NDQ3Njh8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Strict Teacher Avatar Representation (Abstract planet)"
+      },
+      "avatar_friendly": {
+        "url": "https://images.unsplash.com/photo-1680355466499-39701c0be79f?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHwyfHxyb2JvdCUyMGZhY2UlMjBwb3J0cmFpdCUyMDNkJTIwaWxsdXN0cmF0aW9ufGVufDB8fHx8MTc3Njg0NDc2M3ww&ixlib=rb-4.1.0&q=85",
+        "description": "Friendly Mentor Avatar (Red and white robot with headphones)"
+      },
+      "avatar_socratic": {
+        "url": "https://images.unsplash.com/photo-1692250775015-75ec99f14486?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1MDV8MHwxfHNlYXJjaHw0fHxyb2JvdCUyMGZhY2UlMjBwb3J0cmFpdCUyMDNkJTIwaWxsdXN0cmF0aW9ufGVufDB8fHx8MTc3Njg0NDc2M3ww&ixlib=rb-4.1.0&q=85",
+        "description": "Socratic Coach Avatar (Computer generated brain/mind)"
+      },
+      "avatar_motivational": {
+        "url": "https://images.unsplash.com/photo-1682071531961-3c50cff9feaa?crop=entropy&cs=srgb&fm=jpg&ixid=M3w4NjA1NTN8MHwxfHNlYXJjaHwxfHxjb2xvcmZ1bCUyMGFic3RyYWN0JTIwc2hhcGUlMjAzZHxlbnwwfHx8fDE3NzY4NDQ3Njh8MA&ixlib=rb-4.1.0&q=85",
+        "description": "Motivational Coach Avatar (Pink and blue abstract vibrant shape)"
+      },
+      "dashboard_empty_state": {
+        "url": "https://images.pexels.com/photos/29474097/pexels-photo-29474097.jpeg?auto=compress&cs=tinysrgb&dpr=2&h=650&w=940",
+        "description": "Minimalistic 3D pastel shapes for empty state illustrations."
+      }
+    },
+    "icons": {
+      "library": "lucide-react",
+      "stroke_width": "2.5",
+      "style": "bold and playful"
+    }
+  },
+  "accessibility_and_motion": {
+    "motion": {
+      "hover": "Spring-based hover effects on buttons and cards (use framer-motion or simple CSS transform/translate).",
+      "page_transition": "Fade in and slight slide up (y: 20 -> 0)."
+    },
+    "accessibility": {
+      "contrast": "Black (#121212) text on pastel backgrounds provides excellent contrast (WCAG AAA).",
+      "focus": "All interactive elements MUST have a thick focus ring (e.g., focus:ring-4 focus:ring-brand focus:outline-none).",
+      "test_ids": "Include data-testid kebab-case attributes on all inputs, buttons, and actionable items."
+    }
+  },
+  "instructions_to_main_agent": [
+    "Install `@fontsource/outfit` and `@fontsource/dm-sans` to inject the typography.",
+    "Use standard HTML/Tailwind over generic Shadcn components when building the Neo-Brutalist cards to ensure border and shadow styling matches the guidelines perfectly.",
+    "For complex interactions (dropdowns, dialogs, tabs), use Shadcn UI but heavily customize the classes to add border-2 border-black and hard shadows.",
+    "Implement the 'Language Switcher' cleanly in the navbar.",
+    "The Student Dashboard must feature the Avatar Picker prominently before starting a lesson.",
+    "Do NOT use pure border-radius on everything, use rounded-xl/2xl paired with hard shadows to emphasize the playful Neo-Brutalist look."
+  ]
+}

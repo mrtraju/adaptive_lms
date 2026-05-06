@@ -1,0 +1,40 @@
+{
+  "summary": "Iter 4 testing complete. Backend: 56/56 pytest pass (46 regression + 10 new for teach endpoint/premium_personalities/interactive_teach flag/teach bucket/intervention-cache-dict regression). Frontend: verified Interactive Teach flow end-to-end on the real preview URL — modal opens from purple teach-open button, progress advances 1/7→2/7 after AI replies, zero console errors, avatar/progress-bar/input/send all wired. ErrorBoundary wrapping confirmed in source (Protected wraps with ErrorBoundary in App.js) but not forced to render (no real crash). Fixed 2 critical backend bugs introduced this iteration (see backend_issues).",
+  "backend_issues": {
+    "critical": [],
+    "minor": [
+      {"endpoint": "/api/teacher/interventions/{id}", "issue": "FIXED by testing agent — TTLCache entry stored as tuple (datetime, dict); on second call FastAPI serialized the tuple as a JSON array [\"2026-...\", {...}] instead of a dict, so clients got a list and never saw `cached:true`. Changed to store the plain dict {**out,'cached':True} (cachetools already handles TTL). `test_intervention_cache_returns_dict_not_tuple` and the existing `test_interventions_cached_on_second_call` now pass."},
+      {"endpoint": "/api/admin/analytics", "issue": "FIXED by testing agent — ai_by_kind loop iterated only ('chat','lesson','quiz','intervention','bridge'); 'teach' bucket was missing even though the endpoint writes ai_usage rows with kind='teach'. Added 'teach' to the tuple."}
+    ]
+  },
+  "frontend_issues": {
+    "ui_bugs": [],
+    "integration_issues": [],
+    "design_issues": []
+  },
+  "test_report_links": ["/app/backend/tests/backend_test.py", "/app/test_reports/pytest/pytest_results.xml"],
+  "action_items": [
+    "Review & keep the two backend fixes applied by testing agent (intervention cache stores dict only, analytics loop includes 'teach').",
+    "Consider adding an idempotent startup reset of seeded student@lms.com to plan='free' (similar to admin/teacher -> premium) so test determinism is automatic; otherwise a leftover premium state from an earlier test run makes several gating tests false-negative until the tokens fixture downgrades them."
+  ],
+  "critical_code_review_comments": [
+    "_intervention_cache had duplicated TTL logic — the tuple stored a timestamp AND cachetools.TTLCache already tracks expiry. Redundant state caused the bug. Keep only cachetools and drop the manual timestamp.",
+    "INTERVENTION_TTL = timedelta(minutes=10) is now dead code (no reader). Remove to reduce drift.",
+    "ai_by_kind iteration is a string tuple — easy to forget to update when adding a new usage kind. Either derive it from a `USAGE_KINDS` constant that /api/tutor/* all use, or do a single aggregate $group on db.ai_usage.kind so new kinds auto-appear.",
+    "In /api/tutor/teach, `total = max(5, min(body.total_steps, 10))` silently clamps client input; ok but undocumented in the OpenAPI. Add a Field(ge=5, le=10) on the Pydantic model so the API contract matches.",
+    "TeachStepIn.history is List[dict] (untyped); a malicious client could spam huge history. Consider capping list length via Field(max_length=50).",
+    "groq_json retry uses `raw` which is only bound inside the try; if the first Groq call raises non-JSON before `raw` is set, the retry code references an unbound local. Move `raw = ''` before the try.",
+    "/api/subscription/me returns premium_personalities to frontend (good), but the names are hardcoded strings in both PERSONALITIES and PREMIUM_PERSONALITIES. Merge into one source of truth: PERSONALITIES = {id: {prompt, premium: bool}}."
+  ],
+  "updated_files": [
+    "/app/backend/server.py (intervention cache tuple -> dict; analytics ai_by_kind added 'teach')",
+    "/app/backend/tests/backend_test.py (tokens fixture now downgrades seeded student to free; 10 new iter4 tests appended)"
+  ],
+  "success_rate": {"backend": "100% (56/56)", "frontend": "100% on tested Interactive Teach + StudentDashboard derived locks flows"},
+  "test_credentials": "admin@lms.com/admin123 (premium), teacher@lms.com/teacher123 (premium), student@lms.com/student123 (free, restored by fixture/browser test)",
+  "seed_data_creation": "Fixture-created TEST_lsn_*, TEST_sub_*, TEST_quota_* (free students for deterministic quota/subscription tests). Seeded student was upgraded for the browser Interactive Teach test and explicitly downgraded back to 'free' at the end.",
+  "retest_needed": false,
+  "main_agent_can_self_test": true,
+  "context_for_next_testing_agent": "Interactive Teach endpoint: POST /api/tutor/teach, 3-8s per step, returns {reply, question, step, total_steps, done, emotion, personality}. total_steps clamps to [5,10]. Socratic/Motivational require premium on BOTH /tutor/chat and /tutor/teach. /api/admin/analytics.ai_by_kind now has keys: chat, lesson, quiz, intervention, bridge, teach. /api/subscription/me.features now exposes premium_personalities (sorted list ['motivational','socratic']) and interactive_teach (bool). Frontend: Lesson page purple `data-testid=teach-open` opens modal `data-testid=teach-modal`; click `teach-start`, reply in `teach-input`, send via `teach-send`, progress shown in `teach-progress` (e.g. '2/7'). StudentDashboard no longer hardcodes which avatars are premium — it reads subscription.features.premium_personalities. Seeded student can get stuck as premium between runs; the tokens fixture self-heals by downgrading it at start.",
+  "rca_of_the_issue": "Two iter4-introduced backend regressions: (1) The cachetools refactor was left half-done — the store still wrote a tuple (timestamp, payload) from the previous manual-TTL implementation while the reader returned it directly. TTLCache already tracks expiry so the timestamp is noise AND corrupted the JSON response. Fix: store only the dict. (2) When the new 'teach' usage kind was added, the analytics endpoint's hardcoded iteration tuple wasn't updated. Fix: append 'teach' to the loop. Both fixed in /app/backend/server.py; all 56 pytest cases green."
+}
